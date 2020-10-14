@@ -16,7 +16,6 @@ setwd("D:/R_wd")
 
 pacman::p_load(readxl,ggplot2,funModeling,car,DataExplorer,psych,MLmetrics,plotly,mvoutlier,factoextra,summarytools,corrplot,OutlierDetection,InformationValue)
 
-
 Telecom <- read_xlsx(file.choose())
 
 class(Telecom)
@@ -83,35 +82,29 @@ OutlierDetection::UnivariateOutlierDetection(Telecom$AccountWeeks)
 quantile(Telecom$AccountWeeks,c(0.01,0.05,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.95,0.99,1))
 Telecom$AccountWeeks[which(Telecom$AccountWeeks > 195)] <- 195
 
-
 OutlierDetection::UnivariateOutlierDetection(Telecom$DataUsage)
 quantile(Telecom$DataUsage,c(0.01,0.05,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.95,0.99,1))
 Telecom$DataUsage[which(Telecom$DataUsage > 4.10)] <- 4.10
-
 
 OutlierDetection::UnivariateOutlierDetection(Telecom$DayCalls)
 quantile(Telecom$DayCalls,c(0.005,0.01,0.05,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.95,0.99,1))
 Telecom$DayCalls[which(Telecom$DayCalls > 152)] <- 152
 Telecom$DayCalls[which(Telecom$DayCalls < 47.66)] <- 47.66
 
-
 OutlierDetection::UnivariateOutlierDetection(Telecom$DayMins)
 quantile(Telecom_fc$DayMins,c(0.005,0.01,0.05,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.95,0.99,1))
 Telecom$DayMins[which(Telecom$DayMins > 340)] <- 340
 Telecom$DayMins[which(Telecom$DayMins < 25 )] <- 25
-
 
 OutlierDetection::UnivariateOutlierDetection(Telecom$MonthlyCharge)
 quantile(Telecom$MonthlyCharge,c(0.0025,0.005,0.01,0.05,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.95,0.99,1))
 Telecom$MonthlyCharge[which(Telecom$MonthlyCharge > 105)] <- 105
 Telecom$MonthlyCharge[which(Telecom$MonthlyCharge < 15 )] <- 15
 
-
 OutlierDetection::UnivariateOutlierDetection(Telecom$OverageFee)
 quantile(Telecom$OverageFee,c(0.005,0.01,0.05,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.95,0.99,1))
 Telecom$OverageFee[which(Telecom$OverageFee > 16)] <- 16
 Telecom$OverageFee[which(Telecom$OverageFee < 3 )] <- 3
-
 
 OutlierDetection::UnivariateOutlierDetection(Telecom$RoamMins)
 quantile(Telecom$RoamMins,c(0.005,0.01,0.05,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.95,0.99,1))
@@ -205,7 +198,6 @@ car::residualPlots(lgisticfinal,col="lightblue")
 
 lmtest::lrtest(lgisticfinal)
 
-
 ## -----------McFadden R2 -----------------------------####
 
 pscl::pR2(lgisticfinal)
@@ -243,9 +235,7 @@ Telecom_train$probabilities <- predict(lgisticfinal,newdata = Telecom_train[,-1]
 Telecom_train$predictedChurn <- factor(Telecom_train$predictedChurn,levels = c(0,1))
 caret::confusionMatrix(Telecom_train$predictedChurn,Telecom_train$Churn,positive = "1",mode = "everything")
 
-
 ## ------------------------------- ROCR , AUC, GINI, KS ----------------------------------------------------------------------------------###
-
 
 ## ROC Curve ###
 
@@ -286,7 +276,6 @@ caret::confusionMatrix(Telecom_test$predictedChurn,Telecom_test$Churn,positive="
 
 ## ------------------------------- ROCR , AUC, GINI, KS ----------------------------------------------------------------------------------###
 
-
 ## ROC Curve ###
 
 ROClogiobj1<-ROCit::rocit(score = Telecom_test$probabilities,class = Telecom_test$Churn)
@@ -315,7 +304,6 @@ InformationValue::ks_stat(Telecom_test$Churn,Telecom_test$predictedChurn,returnK
 InformationValue::ks_plot(Telecom_test$Churn,Telecom_test$predictedChurn)
 MLmetrics::Gini(Telecom_test$Churn,Telecom_test$predictedChurn)
 
-
 ### ------------------------------------------------------- With Cross Validation --------------------------------------------####
 library(caret)
 
@@ -326,7 +314,6 @@ logi.cvmodel = train(fmla, data = Telecom_train, method="glm",family=binomial(),
 
 plot(varImp(logi.cvmodel))
 
-
 logi_predcv <- predict(logi.cvmodel,newdata = Telecom_train[,-1])
 caret::confusionMatrix(logi_predcv,Telecom_train$Churn,positive = "1",mode = "everything")
 
@@ -335,10 +322,8 @@ logi.cvmodel1 = train(fmla, data = Telecom_test, method="glm",family=binomial(),
 
 plot(varImp(logi.cvmodel1))
 
-
 logitest_predcv <- predict(logi.cvmodel1,newdata = Telecom_test[,-1])
 caret::confusionMatrix(logitest_predcv,Telecom_test$Churn,positive = "1",mode = "everything")
-
 
 ###############################################################################################################
 #                                                                                                             #
@@ -395,7 +380,6 @@ for(i in 1:40)
   bcc <- c(bcc,er)
 }
 
-
 ccc <- numeric()
 k.optm=1
 pred1 <- numeric()
@@ -406,7 +390,6 @@ for (j in 1:40)
   ccc <- ifelse(pred1>0.5,1,0)
   k.optm[j] <- 100 * (sum(Telecom_knntest$Churn == ccc)/NROW(Telecom_knntest$Churn))
 }
-
 
 par(mar = c(5, 5, 3, 5))
 plot(bcc,type="b",ylab="Error Rate",xlab="K- Value",col="Red")
@@ -429,7 +412,6 @@ Telecom_knntrain$predictedChurn <- ifelse(Telecom_knntrain$probabilities > 0.5, 
 
 ## ---------------------------------- Confusion Matrix and model evaluation --------------------------------#####
 
-
 Telecom_knntrain$Churn <- as.factor(Telecom_knntrain$Churn)
 Telecom_knntrain$predictedChurn <- as.factor(Telecom_knntrain$predictedChurn)
 Telecom_knntest$Churn <- as.factor(Telecom_knntest$Churn)
@@ -440,8 +422,6 @@ caret::confusionMatrix(Telecom_knntrain$predictedChurn,Telecom_knntrain$Churn,po
 caret::confusionMatrix(Telecom_knntest$predictedChurn,Telecom_knntest$Churn,positive = "1",mode = "everything")
 
 ## ------------------------------- ROCR , AUC, GINI, KS ----------------------------------------------------------------------------------###
-
-
 ## ROC Curve ###
 
 ROCknnobj<-ROCit::rocit(score = Telecom_knntrain$probabilities,class = Telecom_knntrain$Churn)
@@ -521,7 +501,6 @@ confusionMatrix(knn_cvpred, Telecom_knntrain$Churn,positive = "1",mode = "everyt
 
 Telecom_knntest$Churn <- as.factor(Telecom_knntest$Churn)
 
-
 set.seed(123)
 knn.cvmodel1 <- train(Churn ~ ., data = Telecom_knntest, method='kknn', trControl= cntrl)
 plot(knn.cvmodel1)
@@ -531,7 +510,6 @@ plot(varImp(knn.cvmodel1))
 knn_cvpred1 <- predict(knn.cvmodel1,Telecom_knntest)
 
 confusionMatrix(knn_cvpred1, Telecom_knntest$Churn,positive = "1",mode = "everything")
-
 
 #####################################################################################################################
 #                                                                                                                   #
@@ -555,7 +533,6 @@ TelecomNB_train$probabilities <- Nbtemp
 caret::confusionMatrix(TelecomNB_train$predictedChurn,TelecomNB_train$Churn,positive = "1",mode = "everything")
 
 ## ------------------------------- ROCR , AUC, GINI, KS ----------------------------------------------------------------------------------###
-
 
 ## ROC Curve ###
 
@@ -627,14 +604,12 @@ MLmetrics::Gini(TelecomNB_test$Churn,TelecomNB_test$predictedChurn)
 
 ### ------------------------------------- With Cross Validation ---------------------------------------------------####
 
-
 cntrl = trainControl(method = "repeatedcv", number = 10, repeats = 3)
 
 set.seed(123)
 NB.cvmodel = train(fmla, data = TelecomNB_train, method='nb',trControl= cntrl,tuneLength= 10)
 summary(NB.cvmodel)
 plot(varImp(NB.cvmodel))
-
 
 NB_predcv <- predict(NB.cvmodel,newdata = TelecomNB_train[,-1])
 caret::confusionMatrix(NB_predcv,TelecomNB_train$Churn,positive = "1",mode = "everything")
@@ -648,7 +623,6 @@ plot(varImp(NB.cvmodel1))
 
 NB_predcv1 <- predict(NB.cvmodel1,newdata = TelecomNB_test[,-1])
 caret::confusionMatrix(NB_predcv1,TelecomNB_test$Churn,positive = "1",mode = "everything")
-
 
 #####################################################################################################################
 #                                                                                                                   #
@@ -688,8 +662,6 @@ write.csv(dftest,file = "MEvaltest.csv")
 
 df <- read.csv(file.choose(),header = TRUE)
 esquisse::esquisser(df)
-
-
 
 #####################################################################################################################
 #                                                                                                                   #
