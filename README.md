@@ -8,3 +8,5 @@ BACP - GL Projects Hands on in both R &amp; Python
 5. Predictive modeling project to predict customer churn in Telecom using Logistic Regression, K - NN &amp; Naive Bayes
 
 Other concepts covered : CHAID ,GBM,  Market Basket Analysis , Discriminant Analysis (LDA , QDA & MDA) , SVM
+
+https://www.greatlearning.in/business-analytics-certificate-course
