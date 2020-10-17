@@ -10,10 +10,9 @@ setwd("D:/R_wd")
 #                                                                                                      #
 #                         Code created:  2020-08-16                                                    #
 #                         Last updated:  2020-08-16                                                    #
-#                         Source:        C:/Users/indway/Desktop                                       #
+#                         Source:        D:/R_wd                                                       #
 #                                                                                                      #
 ########################################################################################################
-
 
 pacman::p_load(readr,dendextend,ggplot2,cluster,funModeling,NbClust,DataExplorer,psych,MLmetrics,plotly,mvoutlier,factoextra,summarytools)
 
@@ -43,6 +42,7 @@ head(bankscaled)
 mvoutlier::uni.plot(bankscaled,symb = TRUE)
 boxplot(bankscaled)
 
+
 ##############################################################################################################################
 #                                                                                                                            #
 #                                          Hierarchical Clustering part                                                      #
@@ -53,7 +53,7 @@ boxplot(bankscaled)
 distance <- dist(bankscaled,method = "euclidean")
 summary(distance)
 
-### --------------------------------- Method to assess best distance and linkage method---------------------------------#####
+### --------------------------------- Method to assess distance metric and linkage method----------------------#####
 
 a <- (Complete <- agnes(bankscaled,method = "complete",metric = "euclidean"))$ac
 b<- (Complete <- agnes(bankscaled,method = "average",metric = "euclidean"))$ac
@@ -76,7 +76,8 @@ plot(temp,ylab = "agglomerative coefficients", main = "Plot to determine best di
 lines(temp,col="blue")
 abline(v=3,col="green",lty=3)
 
-## ----------------Building hclust model ----------------------------------------###
+
+## ----------------building hclust model ------------------------------###
 
 hierarclust <- hclust(distance,method = "ward.D")
 
@@ -115,28 +116,31 @@ clusters <- cutree(hierarclust,k = 3)
 
 newbank <- cbind(bank,clusters)
 
-## ------------------------visualizing the clusters ---------------------------------------------------------------###
+## visualizing the clusters ###
 
 cluster::clusplot(newbank[,-8],newbank$clusters,color = TRUE,shade=TRUE,labels=2,lines=1,main="Hierarcical cluster plot")
 factoextra::fviz_cluster(hierarclust,data = bankscaled,ellipse.type = "convex",palette = "jco",repel = TRUE)
 with(newbank,pairs(newbank[,-8], col = c(1:3)[newbank$clusters],upper.panel = NULL))
 
-## -----------------Next do the profiling for the clusters which is IMPORTANT STEP-----------------------------------###
+## Next do the profiling for the clusters which is IMPORTANT STEP###
 
 aggr <- aggregate(newbank[,-c(8)],list(newbank$clusters),mean)
+
 aggr
 
 sil <- silhouette(newbank$clusters,dist = dist(newbank))
-plot(sil,col=c("blue","red","green"))
+plot(sil,col=c("blue","red","chartreuse3"))
+factoextra::fviz_silhouette(sil,label = FALSE, print.summary = TRUE)
+
 summary(sil)
 class(sil)
+
 
 ##############################################################################################################
 #                                                                                                            #
 #                               K - MEANS CLUSTERING                                                         #
 #                                                                                                            #
 #############################################################################################################
-
 
 factoextra::fviz_nbclust(bankscaled, kmeans,method = "wss")
 factoextra::fviz_nbclust(bankscaled, kmeans,method = "silhouette")
@@ -194,12 +198,15 @@ with(bank.kmeans,pairs(bank.kmeans[,-8], col = c(1:3)[bank.kmeans$ClusterMapping
 ### --------------------- K - means profiling --------------------------------------###########3
 
 bank.kmeans <- bank
+
 bank.kmeans$ClusterMapping <- kmeans.final$cluster
 
 silkmeans <- silhouette(bank.kmeans$ClusterMapping,dist = dist(bank.kmeans))
 factoextra::fviz_silhouette(silkmeans)
+plot(silkmeans,col=c("blue","red","chartreuse3"))
 
 aggrkmeans <- aggregate(bank.kmeans[,-c(8)],list(bank.kmeans$ClusterMapping),mean)
+
 
 kmeans.group1 <- subset(bank.kmeans, bank.kmeans$ClusterMapping ==1 )
 kmeans.group2 <- subset(bank.kmeans, bank.kmeans$ClusterMapping ==2 )
