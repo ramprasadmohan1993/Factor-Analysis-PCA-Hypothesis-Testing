@@ -9,8 +9,8 @@ setwd("D:/R_wd")
 #                         Client:        Great Learning                                                #
 #                                                                                                      #
 #                         Code created:  2020-08-16                                                    #
-#                         Last updated:  2020-08-16                                                    #
-#                         Source:        C:/Users/indway/Desktop                                       #
+#                         Last updated:  2020-08-20                                                    #
+#                         Source:        C:/Users/Desktop                                              #
 #                                                                                                      #                                                                                                    
 ########################################################################################################
 
@@ -20,7 +20,6 @@ setwd("D:/R_wd")
 #                                                                                                             #
 ###############################################################################################################
 
-
 pacman::p_load(ggplot2,psych,readr,summarytools,DataExplorer,rpart,rpart.plot,rsample,vip,ROCR,randomForest,caret,MLmetrics)
 
 insurance <- read.csv(file.choose(),header = TRUE)
@@ -29,7 +28,6 @@ head(insurance)
 
 insurance$Claimed <- as.factor(insurance$Claimed)
 str(insurance)
-
 
 ### --------------------------- Exploratory Data Analysis & Transformation ------------------------------------###
 
@@ -53,7 +51,6 @@ funModeling::plot_num(insurance)
 psych::pairs.panels(insurance,hist.col = "blue")
 DataExplorer::plot_missing(insurance)
 
-
 ###############################################################################################################
 #                           Split the data into training and testing model                                    #
 ###############################################################################################################
@@ -65,7 +62,6 @@ Insurance_train <- training(datasplitting)
 Insurance_test <- testing(datasplitting)
 
 head(Insurance_train)
-
 
 ###############################################################################################################
 #                                      CART MODEL                                                             #
@@ -88,14 +84,12 @@ caret::varImp(CARTmodel)
 printcp(CARTmodel)
 plotcp(CARTmodel,col = "red",upper = "splits")
 
-
 prunedCART <- prune(CARTmodel,cp = 0.00463679, "CP")
 
 rpart::post(prunedCART,file = "")
 rpart.plot(prunedCART,type = 2,fallen.leaves = TRUE,extra = 104)
 printcp(prunedCART)
 plotcp(prunedCART)
-
 
 rpart.plot::prp(prunedCART,type = 2,fallen.leaves = FALSE)
 
@@ -135,7 +129,7 @@ confusionMatrix(Newinsurancetrain$predictedclass,Newinsurancetrain$Claimed,posit
 
 confusionMatrix(Newinsurancetest$predictedclass,Newinsurancetest$Claimed,positive = "Yes",mode = "everything")
 
-####------------------------------------------ROCR-----------------------------------------------------------###
+####------------------------------------------ROC & AUC-----------------------------------------------------------###
 
 library(ROCR)
 
@@ -235,7 +229,6 @@ RFauc <- performance(predRF,"auc")
 ROCRF1<-ROCit::rocit(score = Insurance_testRF$predicted.score,class = Insurance_testRF$Claimed)
 plot(ROCRF1)
 
-
 predRF1 <- ROCR::prediction(Insurance_testRF$predicted.score,Insurance_testRF$Claimed)
 perfRF1 <- performance(predRF1, "tpr", "fpr")
 
@@ -245,14 +238,13 @@ RFauc1 <- performance(predRF1,"auc")
 
 ###############################################################################################################
 #                                                                                                             #
-#                           Second part :  Artificial Nueral Network ANN                                      #
+#                           Second part :  Artificial Neural Network ANN                                      #
 #                                                                                                             #
 ###############################################################################################################
 
 ###-----------------------------Data preparation converting to numeric values---------------------------------####
 
 ## Reading Data & removing the extreme outlier values and Channel column-------------------------------#######
-
 
 insurance <- read.csv(file.choose(),header = TRUE)
 
@@ -309,14 +301,11 @@ datasplitting1 <- initial_split(data = Final_ANNdata,prop = 0.7,strata = "Claime
 Insurance_trainANN <- training(datasplitting1)
 Insurance_testANN <- testing(datasplitting1)
 
-
 ### ------------------------------- Build Nueral Net Model-----------------------------------------#####
-
 
 library(neuralnet)
 library(NeuralNetTools)
 library(NeuralSens)
-
 
 names(Insurance_trainANN)
 FormulaforANN <- as.formula(Claimed ~ Age + Agency.CodeC2B + Agency.CodeCWT + Agency.CodeEPX + Agency.CodeJZI + TypeAirlines + TypeTravel.Agency + Commision + Duration + Sales + Product.NameBronze.Plan + Product.NameCancellation.Plan + Product.NameCustomised.Plan + Product.NameGold.Plan + Product.NameSilver.Plan + DestinationAmericas + DestinationASIA + DestinationEUROPE)
@@ -372,14 +361,13 @@ caret::confusionMatrix(Insurance_trainANN$Claimedpredicted,Insurance_trainANN$Cl
 #Insurance_testANN$probabilities <- predict_testdata$net.result[[1]]
 hist(Insurance_testANN$probabilities,breaks = 5)
 
-
 Insurance_testANN$predicted.class <- ifelse(Insurance_testANN$probabilities >0.5,1,0)
 Insurance_testANN$predicted.class <- as.factor(Insurance_testANN$predicted.class)
 Insurance_testANN$Claimed <- as.factor(Insurance_testANN$Claimed)
 
 caret::confusionMatrix(Insurance_testANN$predicted.class,Insurance_testANN$Claimed,positive = "1", mode = "everything")
 
-#### -----------------------------ROCR -------------------------------------------------------------------######
+#### -----------------------------ROC & AUC -------------------------------------------------------------------######
 
 library(ROCR)
 
@@ -419,7 +407,6 @@ Claimeddf$Claimed <- NULL
 
 library(esquisse)
 esquisse::esquisser()
-
 
 sales <- cut(insurance$Sales, include.lowest = TRUE, breaks = seq(0, 600, by = 30))
 ggplot(insurance, aes(sales, fill = Claimed)) + geom_bar(position="dodge") + scale_fill_manual(values=c("blue","Red")) + geom_text(stat='count',aes(label = after_stat(count)),vjust = -1)
