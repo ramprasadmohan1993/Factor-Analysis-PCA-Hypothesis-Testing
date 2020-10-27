@@ -129,7 +129,7 @@ confusionMatrix(Newinsurancetrain$predictedclass,Newinsurancetrain$Claimed,posit
 
 confusionMatrix(Newinsurancetest$predictedclass,Newinsurancetest$Claimed,positive = "Yes",mode = "everything")
 
-####------------------------------------------ROCR-----------------------------------------------------------###
+####------------------------------------------ROC & AUC-----------------------------------------------------------###
 
 library(ROCR)
 
@@ -238,7 +238,7 @@ RFauc1 <- performance(predRF1,"auc")
 
 ###############################################################################################################
 #                                                                                                             #
-#                           Second part :  Artificial Nueral Network ANN                                      #
+#                           Second part :  Artificial Neural Network ANN                                      #
 #                                                                                                             #
 ###############################################################################################################
 
@@ -367,7 +367,7 @@ Insurance_testANN$Claimed <- as.factor(Insurance_testANN$Claimed)
 
 caret::confusionMatrix(Insurance_testANN$predicted.class,Insurance_testANN$Claimed,positive = "1", mode = "everything")
 
-#### -----------------------------ROCR -------------------------------------------------------------------######
+#### -----------------------------ROC & AUC -------------------------------------------------------------------######
 
 library(ROCR)
 
